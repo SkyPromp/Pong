@@ -54,7 +54,7 @@ class Ball:
         self.__screen_width = screen_width
         self.__angle = angle
 
-    def next(self):
+    def next(self, screen):
         self.__c += math.cos(self.__angle) * self.__speed
         self.__r += math.sin(self.__angle) * self.__speed
 
@@ -74,8 +74,21 @@ class Ball:
 
             return 1, 0
 
-        # returns score to be added to player wasd, player arrows
-        return 0, 0
+        # elif screen.get_at(self.__c, self.__r):
+        try:  # make offset with radius of ball TODO: use cos function on the angle to only check one
+            color = screen.get_at((round(self.__r) + self.__radius, round(self.__c)))
+            print(color, (255, 255, 255, 255) == color, round(self.__c), round(self.__r))
+            if str(color) == str((255, 255, 255, 255)):
+                self.__angle *= -1
+            else:
+                color = screen.get_at((round(self.__r) - self.__radius, round(self.__c)))
+                print(color, (255, 255, 255, 255) == color, round(self.__c), round(self.__r))
+                if str(color) == str((255, 255, 255, 255)):
+                    self.__angle *= -1
+
+        finally:
+            # returns score to be added to player wasd, player arrows
+            return 0, 0
 
     def reset(self):
         self.__r = self.__screen_width // 2
@@ -124,7 +137,7 @@ def main():
     arrowsdown = False
 
     ballradius = 10
-    ballspeed = 100
+    ballspeed = 3
     ball = Ball(ballradius, dwidth // 2, dheight // 2, ballspeed, dheight, dwidth)
 
     wasdscore = 0
@@ -185,13 +198,13 @@ def main():
         wasd.draw(DISPLAY)
         arrows.draw(DISPLAY)
 
-        wasdscoreadder, arrowsscoreadder = ball.next()
+        wasdscoreadder, arrowsscoreadder = ball.next(DISPLAY)
         wasdscore += wasdscoreadder
         arrowsscore += arrowsscoreadder
         # print(wasdscore, arrowsscore)
-        text = font.render(str(wasdscore), True, (255, 255, 255))
+        text = font.render(str(wasdscore), True, (254, 254, 254))  # May not be white because of ball collision system
         DISPLAY.blit(text, (5, 5))
-        text = font.render(str(arrowsscore), True, (255, 255, 255))
+        text = font.render(str(arrowsscore), True, (254, 254, 254))  # May not be white because of ball collision system
         DISPLAY.blit(text, (dwidth - text.get_rect().width - 5, 5))
 
         ball.draw(DISPLAY)

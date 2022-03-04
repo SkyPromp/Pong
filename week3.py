@@ -30,22 +30,13 @@ class Palet:
         else:
             self.__r = 0
 
-    def getPos(self):
-        return self.__r, self.__c
-
-    def setSpeed(self, new_speed):
-        self.__speed = new_speed
-
-    def setHeight(self, new_height):
-        self.__height = new_height
-
     def draw(self, screen):
         pg.draw.rect(screen, (255, 255, 255), pg.Rect(self.__c, self.__r, self.__width,
                                                       self.__height))  # c = side to side
 
 
 class Ball:
-    def __init__(self, radius, r, c, speed, screen_height, screen_width, angle=(random.random() * 2 * math.pi)):
+    def __init__(self, radius, r, c, speed, screen_height, screen_width, palet_width, angle=(random.random() * 2 * math.pi)):
         self.__radius = radius
         self.__r = r
         self.__c = c
@@ -53,6 +44,8 @@ class Ball:
         self.__screen_height = screen_height
         self.__screen_width = screen_width
         self.__angle = angle
+        self.__wait = 0
+        self.__palet_width = palet_width
 
     def next(self, screen):
         self.__c += math.cos(self.__angle) * self.__speed
@@ -74,17 +67,17 @@ class Ball:
 
             return 1, 0
 
-        # elif screen.get_at(self.__c, self.__r):
-        try:  # make offset with radius of ball TODO: use cos function on the angle to only check one
-            color = screen.get_at((round(self.__r) + self.__radius, round(self.__c)))
-            print(color, (255, 255, 255, 255) == color, round(self.__c), round(self.__r))
-            if str(color) == str((255, 255, 255, 255)):
+        self.__wait += 1
+        try:
+            color = screen.get_at((round(self.__r) - self.__radius, round(self.__c)))
+            if str(color) == str((255, 255, 255, 255)) and self.__wait > 0:
                 self.__angle *= -1
-            else:
-                color = screen.get_at((round(self.__r) - self.__radius, round(self.__c)))
-                print(color, (255, 255, 255, 255) == color, round(self.__c), round(self.__r))
-                if str(color) == str((255, 255, 255, 255)):
-                    self.__angle *= -1
+                self.__wait = - (self.__palet_width / self.__speed) - 2
+
+            color = screen.get_at((round(self.__r) + self.__radius, round(self.__c)))
+            if str(color) == str((255, 255, 255, 255)) and self.__wait > 0:
+                self.__angle *= -1
+                self.__wait = - (self.__palet_width / self.__speed) - 2
 
         finally:
             # returns score to be added to player wasd, player arrows
@@ -137,8 +130,8 @@ def main():
     arrowsdown = False
 
     ballradius = 10
-    ballspeed = 3
-    ball = Ball(ballradius, dwidth // 2, dheight // 2, ballspeed, dheight, dwidth)
+    ballspeed = 10
+    ball = Ball(ballradius, dwidth // 2, dheight // 2, ballspeed, dheight, dwidth, palet_width)
 
     wasdscore = 0
     arrowsscore = 0

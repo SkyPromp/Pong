@@ -65,25 +65,24 @@ class Ball:
             self.__angle = math.pi - self.__angle
 
         if self.__r < self.__radius:  # hits left
-            self.__r = self.__screen_width // 2
-            self.__c = self.__screen_height // 2
-            self.__angle = random.random() * 2 * math.pi
-            while abs(math.cos(self.__angle)) > 0.9:
-                self.__angle = random.random() * 2 * math.pi
+            self.reset()
 
             return 0, 1
 
         elif self.__r >= self.__screen_width - self.__radius:  # hits right
-            self.__r = self.__screen_width // 2
-            self.__c = self.__screen_height // 2
-            self.__angle = random.random() * 2 * math.pi
-            while abs(math.cos(self.__angle)) > 0.9:
-                self.__angle = random.random() * 2 * math.pi
+            self.reset()
 
             return 1, 0
 
         # returns score to be added to player wasd, player arrows
         return 0, 0
+
+    def reset(self):
+        self.__r = self.__screen_width // 2
+        self.__c = self.__screen_height // 2
+        self.__angle = random.random() * 2 * math.pi
+        while abs(math.cos(self.__angle)) > 0.9:
+            self.__angle = random.random() * 2 * math.pi
 
     def draw(self, screen):
         pg.draw.circle(screen, (255, 255, 255), (self.__r, self.__c), self.__radius, 5)

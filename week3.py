@@ -16,14 +16,14 @@ class Palet:
     def __repr__(self):
         return f"Palet({self.__r}, {self.__c}, {self.__height}, {self.__width}, {self.__speed}, {self.__screen_height})"
 
-    def down(self):
+    def down(self):  # TODO: smooth palet movement
         new_y = self.__r + self.__speed
         if self.__screen_height - self.__height > new_y:  # Slightly sinks into the border
             self.__r = new_y
         else:
             self.__r = self.__screen_height - self.__height  # Slightly sinks into the border
 
-    def up(self):
+    def up(self): # TODO: smooth palet movement
         new_y = self.__r - self.__speed
         if new_y > 0:
             self.__r = new_y
@@ -47,7 +47,7 @@ class Ball:
         self.__wait = 0
         self.__palet_width = palet_width
 
-    def next(self, screen):
+    def next(self, screen):  # TODO: smooth ball movement
         self.__c += math.cos(self.__angle) * self.__speed
         self.__r += math.sin(self.__angle) * self.__speed
 
@@ -155,13 +155,14 @@ def main():
                     wasdup = True
 
                 # if event.key == pg.K_w:  # QWERTY
-                #     wasd.up()
+                #     wasdup = True
 
                 if event.key == pg.K_s:
                     wasddown = True
 
                 if event.key == pg.K_p:
                     running = False
+                    print(wasdscore, arrowsscore)
 
             if event.type == pg.KEYUP:
                 if event.key == pg.K_DOWN:
@@ -174,7 +175,7 @@ def main():
                     wasdup = False
 
                 # if event.key == pg.K_w:  # QWERTY
-                #     wasd.up()
+                #     wasdup = False
 
                 if event.key == pg.K_s:
                     wasddown = False
@@ -194,7 +195,6 @@ def main():
         wasdscoreadder, arrowsscoreadder = ball.next(DISPLAY)
         wasdscore += wasdscoreadder
         arrowsscore += arrowsscoreadder
-        # print(wasdscore, arrowsscore)
         text = font.render(str(wasdscore), True, (254, 254, 254))  # May not be white because of ball collision system
         DISPLAY.blit(text, (5, 5))
         text = font.render(str(arrowsscore), True, (254, 254, 254))  # May not be white because of ball collision system
